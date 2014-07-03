@@ -1,0 +1,29 @@
+/* Common Linker file for AN2295 Kinetis K and L Series */
+
+/*-Memory Regions-*/
+define symbol __ICFEDIT_region_RAM_start__      = 0x1fffff00;
+define symbol __ICFEDIT_region_RAM_end__        = 0x1fffffff;
+define symbol __ICFEDIT_region_RAM1_start__     = 0x20000060;
+define symbol __ICFEDIT_region_RAM1_end__       = 0x2000ffff;
+define symbol IntVectTable_start__              = 0x20000000;
+define symbol IntVectTable_end__                = 0x2000003f;
+
+define exported symbol __BOOT_STACK_ADDRESS = __ICFEDIT_region_RAM1_end__ - 31;
+
+define memory mem with size = 4G;
+define region RAM_region                = mem:[from __ICFEDIT_region_RAM_start__   to __ICFEDIT_region_RAM_end__];
+define region RAM1_region               = mem:[from __ICFEDIT_region_RAM1_start__   to __ICFEDIT_region_RAM1_end__];
+
+do not initialize { readwrite };
+do not initialize { readonly };
+initialize by copy { section .data};
+initialize by copy  { section .textrw };
+keep { section .IntVectTable };
+initialize by copy   { section .noinit };
+
+
+place in RAM1_region            { readwrite, readonly};
+place in RAM1_region             { section codeRam};
+place in RAM1_region            { section IntVectTable};
+place at address mem:0x2000006C {readonly section .mainptr};
+                      
